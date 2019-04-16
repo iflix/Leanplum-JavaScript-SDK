@@ -239,7 +239,7 @@ export default class Leanplum {
           VarCache.token = startResponse[Constants.KEYS.TOKEN]
 
           events.publish('start/messages', {
-            messages: Leanplum.getFilteredResults(startResponse[Constants.KEYS.MESSAGES], 'start')
+            messages: Leanplum.getFilteredResults(startResponse[Constants.KEYS.MESSAGES], ['start','resume'])
           })
         } else {
           InternalState.startSuccessful = false
@@ -252,7 +252,7 @@ export default class Leanplum {
   /**
    * return an array of filtered message
    * @param messages {Object} the message response from lp server
-   * @param trigger {String} the trigger we want to check against
+   * @param trigger {String} or {array} the trigger we want to check against
    * @param verb {String} necessary for some event
    * @param noun {String} necessary for some event
    * @param params {Object} {  necessary for some event

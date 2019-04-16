@@ -6,7 +6,7 @@ import VarCache from "./VarCache";
 /** private
  * return true if message pass one trigger/verb condition
  * @param params {Object}
- * @param message
+ * @param message {Object}
  * @returns {Boolean}
  */
 const filterByTriggers = (params={}) => (message) => {
@@ -175,16 +175,16 @@ export default class ActionManager {
    * @returns {Array}
    */
   static filterMessages(messages, trigger='', verb=null, noun='', params={}) {
-
+    if(!Array.isArray(trigger)){
+      trigger = [trigger]
+    }
     const now = Date.now()
-
     let filteredMessages = Object.entries(messages)
       .map(([id, message]) => ({ id, ...message }))
-
     filteredMessages = filteredMessages
       .filter(filterByTriggers(
         {
-          triggers:[trigger]
+          triggers:trigger
         }
         ))
       .filter(filterByLimits(now))
