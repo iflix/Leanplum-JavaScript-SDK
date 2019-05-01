@@ -252,7 +252,7 @@ export default class Leanplum {
   /**
    * return an array of filtered message
    * @param messages {Object} the message response from lp server
-   * @param trigger {String} or {array} the trigger we want to check against
+   * @param triggers {String | String[]} the trigger(s) we want to check against
    * @param verb {String} necessary for some event
    * @param noun {String} necessary for some event
    * @param params {Object} {  necessary for some event
@@ -263,11 +263,11 @@ export default class Leanplum {
    * }
    * @returns {Array}
    */
-  static getFilteredResults(messages={}, trigger='', verb='', noun='', params={}) {
+  static getFilteredResults(messages={}, triggers='', verb='', noun='', params={}) {
     if(messages === null) {
       return []
     }
-    return ActionManager.filterMessages(messages, trigger, verb, noun, params)
+    return ActionManager.filterMessages(messages, triggers, verb, noun, params)
   }
   static startFromCache(userId, userAttributes, callback) {
     // Overloads.
