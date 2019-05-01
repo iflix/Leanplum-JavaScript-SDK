@@ -97,7 +97,7 @@ export default class VarCache {
 
   /**
    * get an object containing all the messageViews with messageId as key, per session or from start
-   * @param session {Boolean}
+   * @param session {Boolean | undefined}
    * @returns {Object}
    */
   static getMessagesView(session){
@@ -114,7 +114,7 @@ export default class VarCache {
   /**
    * get all view for a given message either form the start or per session
    * @param messageId
-   * @param session {Boolean}
+   * @param session {Boolean | undefined}
    * @returns {*|Array}
    */
   static getMessageView(messageId, session){

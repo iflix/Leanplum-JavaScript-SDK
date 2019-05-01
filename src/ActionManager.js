@@ -53,9 +53,9 @@ const filterByVerbs = (params) => (trigger) => {
   return true
 }
 
-/** prrivate
+/** private
  * return true if message pass all limits
- * @param now {Date.now()}
+ * @param now {Date}
  * @param message {Object}
  * @returns {Boolean}
  */
@@ -75,7 +75,7 @@ const filterByLimits  = (now) => (message) => {
 }
 
 /** private
- * return the amount of ocurence of messageView since 'since'
+ * return the amount of occurence of messageView since 'since'
  * @param since {Number}
  * @param messageView {Array}
  * @returns {function(*, *): *}
@@ -88,7 +88,7 @@ const countMessageViewsByLimit = (since) => (iterator,messageView) => {
 }
 /** private
  * return true if no limits are defined or if now is in the range
- * @param now {Date.now()}
+ * @param now {Date}
  * @param limitTime {Object}
  * @returns {Boolean}
  */
@@ -164,7 +164,7 @@ export default class ActionManager {
   /** public
    * return an array of filtered message
    * @param messages {Object}
-   * @param trigger {String}
+   * @param triggers {String | String[]}
    * @param verb {String}
    * @param noun {String}
    * @param params {{
@@ -175,9 +175,9 @@ export default class ActionManager {
    * }}
    * @returns {Array}
    */
-  static filterMessages(messages, trigger='', verb=null, noun='', params={}) {
-    if(!Array.isArray(trigger)){
-      trigger = [trigger]
+  static filterMessages(messages, triggers='', verb=null, noun='', params={}) {
+    if(!Array.isArray(triggers)){
+      triggers = [triggers]
     }
     const now = Date.now()
     let filteredMessages = Object.entries(messages)
@@ -185,9 +185,9 @@ export default class ActionManager {
     filteredMessages = filteredMessages
       .filter(filterByTriggers(
         {
-          triggers: trigger
+          triggers: triggers
         }
-        ))
+      ))
       .filter(filterByLimits(now))
       .filter(filterByLimitTimes(now))
     return filteredMessages
