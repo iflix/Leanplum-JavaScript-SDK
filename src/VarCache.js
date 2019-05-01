@@ -113,8 +113,8 @@ export default class VarCache {
 
   /**
    * get all view for a given message either form the start or per session
-   * @param messageId
-   * @param session {Boolean | undefined}
+   * @param {string} messageId
+   * @param {boolean | undefined} session
    * @returns {*|Array}
    */
   static getMessageView(messageId, session){
