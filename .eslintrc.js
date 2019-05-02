@@ -20,7 +20,7 @@ module.exports = {
       'error',
       'single'
     ],
-    'eqeqeq': 'off',
+    'eqeqeq': ['error','always',{'null': 'ignore'}],
     'max-len': [2, 100, 2], // specify the maximum length of a line in your program (off by default)
     'comma-dangle': 0,
     'space-before-function-paren': ['error', 'never'],
