@@ -163,7 +163,7 @@ export default class ActionManager {
 
   /** public
    * return an array of filtered message
-   * @param {object} messages
+   * @param {array} messages
    * @param {string | string[] | ?} triggers
    * @param {string?} verb
    * @param {string?} noun
@@ -179,17 +179,14 @@ export default class ActionManager {
       triggers = [triggers]
     }
     const now = Date.now()
-    let filteredMessages = Object.entries(messages)
-      .map(([id, message]) => ({id, ...message}))
-    filteredMessages = filteredMessages
-      .filter(filterByTriggers(
+    return messages.filter(filterByTriggers(
         {
           triggers: triggers
         }
       ))
       .filter(filterByLimits(now))
       .filter(filterByLimitTimes(now))
-    return filteredMessages
+      .sort((a, b) => a.priority - b.priority)
   }
 
 }

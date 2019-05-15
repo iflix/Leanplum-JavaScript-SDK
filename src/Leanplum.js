@@ -130,6 +130,10 @@ export default class Leanplum {
     return VarCache.variants || []
   }
 
+  static getMessages() {
+    return Varcache.getMessages() || []
+  }
+
   static addStartResponseHandler(handler) {
     InternalState.addStartResponseHandler(handler)
   }
@@ -237,10 +241,10 @@ export default class Leanplum {
               startResponse[Constants.KEYS.ACTION_METADATA]);
           VarCache.variantDebugInfo = startResponse[Constants.KEYS.VARIANT_DEBUG_INFO]
           VarCache.token = startResponse[Constants.KEYS.TOKEN]
-
+          VarCache.setMessages(startResponse[Constants.KEYS.MESSAGES])
           events.publish('start/messages', {
             messages: Leanplum.getFilteredResults(
-                startResponse[Constants.KEYS.MESSAGES],
+                VarCache.getMessages(),
                 ['start', 'resume']
             )
           })
@@ -254,7 +258,7 @@ export default class Leanplum {
   }
   /**
    * return an array of filtered message
-   * @param {Object} messages - the message response from lp server
+   * @param {Array} messages - the message response stored in Varcache
    * @param {String | String[] | ?} triggers - the trigger(s) we want to check against
    * @param {String?} verb - additional parameter
    * @param  {String?} noun - additional parameter
@@ -265,8 +269,8 @@ export default class Leanplum {
    * @param  {string?} params.Name - necessary for some event
    * @return {Array}
    */
-  static getFilteredResults(messages={}, triggers='', verb='', noun='', params={}) {
-    if(messages === null) {
+  static getFilteredResults( messages, triggers='', verb='', noun='', params={}) {
+    if(!messages) {
       return []
     }
     return ActionManager.filterMessages(messages, triggers, verb, noun, params)
