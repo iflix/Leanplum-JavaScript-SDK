@@ -21,7 +21,6 @@
     "eslint": "^3.19.0",
     "eslint-config-google": "^0.7.1",
     "eslint-loader": "^1.6.1",
-    "fsevents": "^1.2.9",
     "grunt": "^1.0.1",
     "grunt-babel": "^8.0.0",
     "grunt-contrib-jshint": "^1.1.0",
@@ -40,9 +39,12 @@
     "uglifyjs-webpack-plugin": "^0.4.3",
     "webpack": "^2.3.3"
   },
+  "optionalDependencies": {
+    "fsevents": "^1.2.9"
+  },
   "name": "@iflix/leanplum-sdk",
   "description": "This is the JavaScript SDK for Leanplum, allowing developers to access and integrate the functionality of Leanplum with applications and devices through JavaScript and HTML5. Leanplum is an application development platform that provides mobile A/B testing, messaging functionality, personalization, and more features for applications. ## Installation Add leanplum.js to your project: ```javascript <script type=\"text/javascript\" src=\"leanplum.js\"></script> ``` ## Usage Initialize Leanplum.",
-  "version": "1.7.2-iflix",
+  "version": "2.0.0-iflix",
   "main": "dist/leanplum.min.js",
   "directories": {
     "test": "test"

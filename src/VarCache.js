@@ -33,6 +33,7 @@ export default class VarCache {
   static actionMetadata = {}
   static messagesView = undefined
   static messagesViewPerSession = []
+  static messages
 
   static applyDiffs(diffs, variants, actionMetadata) {
     VarCache.diffs = diffs
@@ -141,7 +142,20 @@ export default class VarCache {
         })
   }
 
-  static mergeHelper(vars, diff) {
+  static getMessages() {
+    return VarCache.messages
+  }
+
+  /**
+   * Transform message { messageId:{message}, } to [{message}] and store
+   * @param {Object} messages
+   */
+  static setMessages(messages) {
+    VarCache.messages = Object.entries(messages)
+        .map(([id, message]) => ({id, ...message}))
+  }
+
+    static mergeHelper(vars, diff) {
     if (typeof diff === 'number' || typeof diff === 'boolean' || typeof diff === 'string') {
       return diff
     }
