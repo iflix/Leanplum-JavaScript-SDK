@@ -35,7 +35,7 @@ export default {
     REGISTER_DEVICE: 'registerDevice'
   },
 
-  SDK_VERSION: '1.7.2-iflix',
+  SDK_VERSION: '2.0.0-iflix',
 
   CLIENT: 'js',
 

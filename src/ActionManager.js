@@ -162,7 +162,7 @@ const limitVerbEvaluators = {
 export default class ActionManager {
 
   /** public
-   * return an array of filtered message
+   * return an array of filtered message ordered by priority
    * @param {array} messages
    * @param {string | string[] | ?} triggers
    * @param {string?} verb

@@ -34,7 +34,6 @@ export default class VarCache {
   static messagesView = undefined
   static messagesViewPerSession = []
   static messages
-  static messagesDiff
 
   static applyDiffs(diffs, variants, actionMetadata) {
     VarCache.diffs = diffs
