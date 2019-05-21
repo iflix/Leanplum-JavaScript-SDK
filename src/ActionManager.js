@@ -181,7 +181,9 @@ export default class ActionManager {
     const now = Date.now()
     return messages.filter(filterByTriggers(
         {
-          triggers: triggers
+          triggers: triggers,
+          verb: verb,
+          noun: noun,
         }
       ))
       .filter(filterByLimits(now))

@@ -430,7 +430,7 @@ export default class Leanplum {
         })
   }
 
-  static advanceTo(state, info, params) {
+  static advanceTo( state, info, params) {
     // Overloads.
     // string|null|undefined, * -> info, params
     // object && !null && !undefined -> params
@@ -438,6 +438,14 @@ export default class Leanplum {
       params = info
       info = undefined
     }
+    events.publish('state/messages', {
+      messages: Leanplum.getFilteredResults(
+        VarCache.getMessages(),
+        ['state'],
+        'triggers',
+        state
+      )
+    })
 
     LeanplumRequest.request(Constants.METHODS.ADVANCE,
         new ArgsBuilder()
