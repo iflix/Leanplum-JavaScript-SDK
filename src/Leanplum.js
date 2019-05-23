@@ -242,11 +242,12 @@ export default class Leanplum {
           VarCache.variantDebugInfo = startResponse[Constants.KEYS.VARIANT_DEBUG_INFO]
           VarCache.token = startResponse[Constants.KEYS.TOKEN]
           VarCache.setMessages(startResponse[Constants.KEYS.MESSAGES])
-          events.publish('start/messages', {
+          events.publish('messages', {
             messages: Leanplum.getFilteredResults(
-                VarCache.getMessages(),
-                ['start', 'resume']
-            )
+              VarCache.getMessages(),
+              ['start', 'resume'],
+            ),
+            calledBy: 'start'
           })
         } else {
           InternalState.startSuccessful = false
@@ -383,20 +384,27 @@ export default class Leanplum {
         )
   }
 
-  static trackMessage(event, messageId) {
-    if(event === '') {
-      VarCache.addMessageView(messageId) // track view track event is '' aka 'View'
-    }
-    // noinspection Annotator
-    LeanplumRequest.request(Constants.METHODS.TRACK,
-        new ArgsBuilder()
-            .add(Constants.PARAMS.EVENT, event)
-            .add(Constants.PARAMS.MESSAGE_ID, messageId), {
-            queued: true
-        })
+  // TODO: need probably to add the params (aka exit, accept, cancel)
+  //  to build valid filter value: '.c23423938 exit'
+  //  either VarCache getMessageById or pass message or pass message params
+  /**
+   * It allow tracking messages by passing an extra 'messageId' param to the track method
+   * @param {string} event
+   * @param {string} messageId
+   */
+  static trackMessage(event, messageId){
+    Leanplum.track(event,undefined,undefined,undefined,messageId)
   }
 
-  static track(event, value, info, params) {
+  /**
+   *
+   * @param event
+   * @param value
+   * @param info
+   * @param params
+   * @param messageId - messageId is an optional parameter for tracking message. Leave it undefined for notification
+   */
+  static track(event, value, info, params, messageId) {
     // Overloads.
     // object && !null && !undefined -> params
     // string -> info, params
@@ -413,19 +421,26 @@ export default class Leanplum {
       params = info
       info = undefined
     }
-
-    events.publish('track', {
-      event,
-      params
+    events.publish( 'messages', {
+      messages: Leanplum.getFilteredResults(
+        VarCache.getMessages(),
+        'event',
+        'triggers',
+        event
+      )
     })
+    let argsBuilder = new ArgsBuilder()
+      .add(Constants.PARAMS.EVENT, event)
+      .add(Constants.PARAMS.VALUE, value || 0.0)
+      .add(Constants.PARAMS.INFO, info)
+      .add(Constants.PARAMS.PARAMS, JSON.stringify(params))
+      // noinspection Annotator
+    if(messageId) {
+      argsBuilder.add(Constants.PARAMS.MESSAGE_ID, messageId)
+    }
 
-    // noinspection Annotator
-      LeanplumRequest.request(Constants.METHODS.TRACK,
-        new ArgsBuilder()
-            .add(Constants.PARAMS.EVENT, event)
-            .add(Constants.PARAMS.VALUE, value || 0.0)
-            .add(Constants.PARAMS.INFO, info)
-            .add(Constants.PARAMS.PARAMS, JSON.stringify(params)), {
+    LeanplumRequest.request(Constants.METHODS.TRACK,
+       argsBuilder, {
           queued: true
         })
   }
@@ -438,10 +453,10 @@ export default class Leanplum {
       params = info
       info = undefined
     }
-    events.publish('state/messages', {
+    events.publish('messages', {
       messages: Leanplum.getFilteredResults(
         VarCache.getMessages(),
-        ['state'],
+        'state',
         'triggers',
         state
       )
