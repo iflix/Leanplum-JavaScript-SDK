@@ -245,7 +245,7 @@ export default class Leanplum {
           events.publish('messages', {
             messages: Leanplum.getFilteredResults(
               VarCache.getMessages(),
-              ['start', 'resume'],
+              ['start', 'resume']
             ),
             calledBy: 'start'
           })
@@ -267,7 +267,7 @@ export default class Leanplum {
    * @param  {number?} params.from - necessary for some event
    * @param  {number?} params.to - necessary for some event
    * @param  {string?} params.paramValue - necessary for some event
-   * @param  {string?} params.Name - necessary for some event
+   * @param  {string?} params.paramName - necessary for some event
    * @return {Array}
    */
   static getFilteredResults( messages, triggers='', verb='', noun='', params={}) {
@@ -458,7 +458,8 @@ export default class Leanplum {
         VarCache.getMessages(),
         'state',
         'triggers',
-        state
+        state,
+        params
       )
     })
 
