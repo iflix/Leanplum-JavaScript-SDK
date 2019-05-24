@@ -184,6 +184,7 @@ export default class ActionManager {
           triggers: triggers,
           verb: verb,
           noun: noun,
+          objects: params
         }
       ))
       .filter(filterByLimits(now))
