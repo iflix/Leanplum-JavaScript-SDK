@@ -426,7 +426,7 @@ export default class Leanplum {
         VarCache.getMessages(),
         'event',
         'triggers',
-        event
+        messageId ? messageId : event
       )
     })
     let argsBuilder = new ArgsBuilder()
