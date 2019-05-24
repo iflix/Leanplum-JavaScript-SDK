@@ -103,7 +103,10 @@ const triggerVerbEvaluators = {
     return noun === trigger.noun
   },
   triggersWithParameter: (trigger, noun, params = {}) => {
-    return noun === trigger.noun && params.paramValue === trigger.objects[params.paramName]
+    // return noun === trigger.noun && params.paramValue === trigger.objects[params.paramName]
+    return noun === trigger.noun &&
+      params.paramName === trigger.objects[0] &&
+      params.paramValue === trigger.objects[1]
   },
   changesTo: (trigger, noun, params = {}) => {
     return noun === trigger.noun && params.to === trigger.objects[0]
