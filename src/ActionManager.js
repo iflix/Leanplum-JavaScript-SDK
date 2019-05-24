@@ -102,13 +102,13 @@ const triggerVerbEvaluators = {
   triggers: (trigger, noun) => {
     return noun === trigger.noun
   },
-  triggersWithParameter: (trigger, noun, params) => {
+  triggersWithParameter: (trigger, noun, params = {}) => {
     return noun === trigger.noun && params.paramValue === trigger.objects[params.paramName]
   },
-  changesTo: (trigger, noun, params) => {
+  changesTo: (trigger, noun, params = {}) => {
     return noun === trigger.noun && params.to === trigger.objects[0]
   },
-  changesFromTo: (trigger, noun, params) => {
+  changesFromTo: (trigger, noun, params = {}) => {
     return noun === trigger.noun &&
       params.from === trigger.objects[0] &&
       params.to === trigger.objects[1]
@@ -184,6 +184,7 @@ export default class ActionManager {
           triggers: triggers,
           verb: verb,
           noun: noun,
+          objects: params
         }
       ))
       .filter(filterByLimits(now))
