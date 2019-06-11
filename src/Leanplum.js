@@ -389,10 +389,14 @@ export default class Leanplum {
   //  either VarCache getMessageById or pass message or pass message params
   /**
    * It allow tracking messages by passing an extra 'messageId' param to the track method
+   * it add the message to the message view list
    * @param {string} event
    * @param {string} messageId
    */
   static trackMessage(event, messageId){
+    if(event === '') {
+      VarCache.addMessageView(messageId) // track view track event is '' aka 'View'
+    }
     Leanplum.track(event,undefined,undefined,undefined,messageId)
   }
 
