@@ -195,4 +195,15 @@ export default class ActionManager {
       .sort((a, b) => a.priority - b.priority)
   }
 
+  /** public
+   * return an array of messages filter by id and and limit
+   * @params {string} messageId
+   * @params {message[]} messages
+   */
+  static filterMessagesById(messages, messageId){
+    const now = Date.now()
+    return messages.filter((message) => messageId === message.id)
+      .filter(filterByLimits(now))
+      .filter(filterByLimitTimes(now))
+  }
 }

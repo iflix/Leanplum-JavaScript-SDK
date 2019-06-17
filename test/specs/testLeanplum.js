@@ -634,6 +634,14 @@ Object.keys(testModes).forEach((mode) => {
         const filteredMessages = Leanplum.getFilteredResults(badLimitMessages,'start')
         expect(filteredMessages).to.be.an('array')
       })
+      it('should return the message with the given id', () => {
+        const filteredMessages = Leanplum.getFilteredResultsById(messages,'123456')
+        expect(filteredMessages).to.be.an('array').of.length(1)
+      })
+      it('should not return a message if none exist with the given id', () =>{
+        const filteredMessages = Leanplum.getFilteredResultsById(messages,'234567')
+        expect(filteredMessages).to.be.an.empty('array')
+      })
     })
   })
 })

@@ -259,15 +259,15 @@ export default class Leanplum {
   }
   /**
    * return an array of filtered message
-   * @param {Array} messages - the message response stored in Varcache
-   * @param {String | String[] | ?} triggers - the trigger(s) we want to check against
+   * @param {Array} messages
+   * @param {String | String[] | ?} triggers
    * @param {String?} verb - additional parameter
    * @param  {String?} noun - additional parameter
-   * @param  {Object?} params - necessary for some event
-   * @param  {number?} params.from - necessary for some event
-   * @param  {number?} params.to - necessary for some event
-   * @param  {string?} params.paramValue - necessary for some event
-   * @param  {string?} params.paramName - necessary for some event
+   * @param  {Object?} params
+   * @param  {number?} params.from
+   * @param  {number?} params.to
+   * @param  {string?} params.paramValue
+   * @param  {string?} params.paramName
    * @return {Array}
    */
   static getFilteredResults( messages, triggers='', verb='', noun='', params={}) {
@@ -275,6 +275,18 @@ export default class Leanplum {
       return []
     }
     return ActionManager.filterMessages(messages, triggers, verb, noun, params)
+  }
+
+  /**
+   * @param {Array} messages
+   * @param {String} messageId
+   * @returns {Array}
+   */
+  static getFilteredResultsById( messages, messageId) {
+    if(!messages) {
+      return []
+    }
+    return ActionManager.filterMessagesById(messages, messageId)
   }
   static startFromCache(userId, userAttributes, callback) {
     // Overloads.
@@ -390,12 +402,35 @@ export default class Leanplum {
   /**
    * It allow tracking messages by passing an extra 'messageId' param to the track method
    * it add the message to the message view list
+   * It publish chained message and campain immediate delivery message
    * @param {string} event
    * @param {string} messageId
+   * @param {{} | undefined} action - the content of the triggered message action if any
+   *  // @param __name__
+   *
    */
-  static trackMessage(event, messageId){
+  static trackMessage(event, messageId, action){
     if(event === '') {
       VarCache.addMessageView(messageId) // track view track event is '' aka 'View'
+    }
+    let chainedMessage
+    if(action) {
+      switch (action.__name__) {
+        case 'Chain to Existing Message':
+          chainedMessage = action['Chained message'] &&
+          Leanplum.getFilteredResultsById(VarCache.getMessages(), action['Chained message'])
+          break
+        case 'Center Popup':
+        case 'HTML':
+        case 'Alert':
+          chainedMessage = [{vars: action, action: action.__name__, id: messageId}]
+          break
+      }
+      if(chainedMessage) {
+        events.publish('messages', {
+          messages: chainedMessage
+        })
+      }
     }
     Leanplum.track(event,undefined,undefined,undefined,messageId)
   }
@@ -433,18 +468,18 @@ export default class Leanplum {
         messageId ? messageId : event
       )
     })
-    let argsBuilder = new ArgsBuilder()
+    let args = new ArgsBuilder()
       .add(Constants.PARAMS.EVENT, event)
       .add(Constants.PARAMS.VALUE, value || 0.0)
       .add(Constants.PARAMS.INFO, info)
       .add(Constants.PARAMS.PARAMS, JSON.stringify(params))
       // noinspection Annotator
     if(messageId) {
-      argsBuilder.add(Constants.PARAMS.MESSAGE_ID, messageId)
+      args.add(Constants.PARAMS.MESSAGE_ID, messageId)
     }
 
     LeanplumRequest.request(Constants.METHODS.TRACK,
-       argsBuilder, {
+       args, {
           queued: true
         })
   }
