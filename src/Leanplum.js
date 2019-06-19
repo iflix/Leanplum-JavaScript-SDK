@@ -405,12 +405,13 @@ export default class Leanplum {
    * It publish chained message and campain immediate delivery message
    * @param {string} event
    * @param {string} messageId
-   * @param {{} | undefined} action - the content of the triggered message action if any
+   * @param {Object | undefined} action - the content of the triggered message action if any
    *  // @param __name__
-   *
+   * @params {string | undefined} parentEvent - the name of the parent event if any
    */
-  static trackMessage(event, messageId, action){
-    if(event === '') {
+  static trackMessage(event,messageId, action, parentEvent){
+    const concatEvent = (parentEvent ? parentEvent + ' ':'') + event
+    if(event === '' && !parentEvent) {
       VarCache.addMessageView(messageId) // track view track event is '' aka 'View'
     }
     let chainedMessage
@@ -418,12 +419,17 @@ export default class Leanplum {
       switch (action.__name__) {
         case 'Chain to Existing Message':
           chainedMessage = action['Chained message'] &&
-          Leanplum.getFilteredResultsById(VarCache.getMessages(), action['Chained message'])
+            Leanplum.getFilteredResultsById(VarCache.getMessages(), action['Chained message'])
           break
         case 'Center Popup':
         case 'HTML':
         case 'Alert':
-          chainedMessage = [{vars: action, action: action.__name__, id: messageId}]
+          chainedMessage = [{
+            vars: action,
+            parentActionName: concatEvent,
+            id: messageId,
+            action: action.__name__
+          }]
           break
       }
       if(chainedMessage) {
@@ -432,7 +438,10 @@ export default class Leanplum {
         })
       }
     }
-    Leanplum.track(event,undefined,undefined,undefined,messageId)
+    // do not send view event if it is a simple chained message
+    if( event !=='' || !parentEvent){
+      Leanplum.track(concatEvent,undefined,undefined,undefined,messageId)
+    }
   }
 
   /**
