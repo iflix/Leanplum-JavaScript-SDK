@@ -25,6 +25,7 @@ const startResponse = require('./responses/start.json')
 const successResponse = require('./responses/success.json')
 const forceContentUpdateResponse = require('./responses/forceContentUpdate.json')
 const messages = require('./responses/messages.json')
+const messagesState = require('./responses/messagesState.json')
 const badLimitMessages = require('./responses/badLimitsMessages')
 const LEANPLUM_PATH = '../../dist/leanplum.js'
 
@@ -622,13 +623,12 @@ Object.keys(testModes).forEach((mode) => {
       })
       it('should return an array of messages if event is defined and match at least one message trigger', () => {
         const filteredMessages = Leanplum.getFilteredResults(messages,['dummy','resume'])
-        expect(filteredMessages).to.be.an('array')
-        assert.isAbove(filteredMessages.length,0)
+        expect(filteredMessages).to.be.an('array').of.length(1)
 
       })
       it('should not generate error if trigger verb is wrongly defined', () => {
         const filteredMessages = Leanplum.getFilteredResults(messages,'start','unknown')
-        expect(filteredMessages).to.be.an('array')
+        expect(filteredMessages).to.be.an('array').of.length(0)
       })
       it('should not generate error if limit verb is wrongly defined', () => {
         const filteredMessages = Leanplum.getFilteredResults(badLimitMessages,'start')
@@ -641,6 +641,32 @@ Object.keys(testModes).forEach((mode) => {
       it('should not return a message if none exist with the given id', () =>{
         const filteredMessages = Leanplum.getFilteredResultsById(messages,'234567')
         expect(filteredMessages).to.be.an.empty('array')
+      })
+      it('should return a message with triggerWithParameter as verb', () => {
+        const filteredMessage = Leanplum.getFilteredResults(messagesState,
+          'state','triggersWithParameter', 'Live screen', { paramName:"id", paramValue :'120936'})
+        expect(filteredMessage).to.be.an('array').of.length(1)
+        assert.equal(filteredMessage[0].id,"4847537941774336")
+      })
+
+      it('should return a message with trigger as verb', () => {
+        const filteredMessage = Leanplum.getFilteredResults(messagesState,
+          'state','triggers', 'Live screen')
+        expect(filteredMessage).to.be.an('array').of.length(1)
+        assert.equal(filteredMessage[0].id,"4927205357256704")
+      })
+      it('should return a message if only one message trigger pass the filter', () => {
+        const filteredMessage = Leanplum.getFilteredResults(messages,
+          'state','triggersWithParameter', 'my.com.iflix.auth.login.AuthActivity',
+          { paramName: 'test', paramValue: '2'})
+        expect(filteredMessage).to.be.an('array').of.length(1)
+        assert.equal(filteredMessage[0].id,"123456")
+      })
+      it('should return no message if only on param is defined', () => {
+        const filteredMessage = Leanplum.getFilteredResults(messages,
+          'state','triggersWithParameter', 'my.com.iflix.auth.login.AuthActivity',
+          { paramName: 'test', paramValue: undefined})
+        expect(filteredMessage).to.be.an('array').of.length(0)
       })
     })
   })

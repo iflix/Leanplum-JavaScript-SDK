@@ -505,7 +505,7 @@ export default class Leanplum {
       messages: Leanplum.getFilteredResults(
         VarCache.getMessages(),
         'state',
-        'triggers',
+         params ? 'triggersWithParameter' : 'triggers',
         state,
         params
       )

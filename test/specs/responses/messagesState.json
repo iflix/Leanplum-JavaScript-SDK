@@ -1,0 +1,64 @@
+[{
+  "id": "4927205357256704",
+  "countdown": 86400,
+  "action": "Center Popup",
+  "whenTriggers": {
+    "children": [
+      {
+        "subject": "state",
+        "objects": [],
+        "verb": "triggers",
+        "noun": "Live screen",
+        "secondaryVerb": "="
+      }
+    ],
+    "verb": "OR"
+  },
+  "parentCampaignId": null,
+  "vars": {
+    "__name__": "Center Popup",
+    "Title": {
+      "Text": "targetWithoutParams"
+    }
+  },
+  "hasImpressionCriteria": false,
+  "priority": 1000,
+  "whenLimits": {
+    "children": [],
+    "subject": null,
+    "objects": []
+  }
+},{
+  "id": "4847537941774336",
+  "countdown": 86400,
+  "action": "Center Popup",
+  "whenTriggers": {
+    "children": [
+      {
+        "subject": "state",
+        "objects": [
+          "id",
+          "120936"
+        ],
+        "verb": "triggersWithParameter",
+        "noun": "Live screen",
+        "secondaryVerb": "="
+      }
+    ],
+    "verb": "OR"
+  },
+  "parentCampaignId": null,
+  "vars": {
+    "__name__": "Center Popup",
+    "Title": {
+      "Text": "targetWithParams"
+    }
+  },
+  "hasImpressionCriteria": false,
+  "priority": 1000,
+  "whenLimits": {
+    "children": [],
+    "subject": null,
+    "objects": []
+  }
+}]

@@ -12,13 +12,13 @@ import VarCache from './VarCache'
  * @return {function({object}):{boolean}}
  */
 const filterByTriggers = (params={}) => (message) => {
-  const triggers = message.whenTriggers && message.whenTriggers.children
-  if(!params.triggers || !triggers) {
+  const messageTriggers = message.whenTriggers && message.whenTriggers.children
+  if(!params.triggers || !messageTriggers) {
     return false
   }
 
-  let filteredByTriggers = triggers.filter((trigger) => (
-    params.triggers.includes(trigger.subject))
+  let filteredByTriggers = messageTriggers.filter((messageTrigger) => (
+    params.triggers.includes(messageTrigger.subject))
   )
 
   if (!filteredByTriggers.length) {
@@ -40,12 +40,18 @@ const filterByTriggers = (params={}) => (message) => {
  * // @param {string} trigger.verb
  * @return {function({object}):{boolean}}
  */
-const filterByVerbs = (params) => (trigger) => {
-  if(trigger.verb === '') {
+const filterByVerbs = (params) => (messageTrigger) => {
+  if(params.verb === '' && messageTrigger.verb === '') {
     return true
   }
-  const evaluator = triggerVerbEvaluators[trigger.verb]
-  return evaluator(trigger, params.noun, params.objects)
+  if(params.verb !== messageTrigger.verb){
+    return false
+  }
+  const evaluator = triggerVerbEvaluators[messageTrigger.verb]
+  if(!evaluator){
+    return false
+  }
+  return evaluator(messageTrigger, params.noun, params.objects)
 }
 
 /** private
@@ -99,22 +105,21 @@ const filterByLimitTimes = (now) => (limitTime) => {
  * provide evaluators for filterByVerbs
  */
 const triggerVerbEvaluators = {
-  triggers: (trigger, noun) => {
-    return noun === trigger.noun
+  triggers: (messageTrigger, noun) => {
+    return noun === messageTrigger.noun
   },
-  triggersWithParameter: (trigger, noun, params = {}) => {
-    // return noun === trigger.noun && params.paramValue === trigger.objects[params.paramName]
-    return noun === trigger.noun &&
-      params.paramName === trigger.objects[0] &&
-      params.paramValue === trigger.objects[1]
+  triggersWithParameter: (messageTrigger, noun, params = {}) => {
+    return noun === messageTrigger.noun &&
+      params.paramName === messageTrigger.objects[0] &&
+      params.paramValue === messageTrigger.objects[1]
   },
-  changesTo: (trigger, noun, params = {}) => {
-    return noun === trigger.noun && params.to === trigger.objects[0]
+  changesTo: (messageTrigger, noun, params = {}) => {
+    return noun === messageTrigger.noun && params.to === messageTrigger.objects[0]
   },
-  changesFromTo: (trigger, noun, params = {}) => {
-    return noun === trigger.noun &&
-      params.from === trigger.objects[0] &&
-      params.to === trigger.objects[1]
+  changesFromTo: (messageTrigger, noun, params = {}) => {
+    return noun === messageTrigger.noun &&
+      params.from === messageTrigger.objects[0] &&
+      params.to === messageTrigger.objects[1]
   }
 }
 
